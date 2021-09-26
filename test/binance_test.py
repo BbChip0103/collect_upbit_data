@@ -7,6 +7,12 @@ from binance import AsyncClient, DepthCacheManager, BinanceSocketManager
 
 import os 
 
+
+metadata_path = '../../metadata/coin_exchange.json'
+with open(metadata_path) as f:
+    exchange_api_dict = json.loads(f.read())
+
+
 async def binance_ws_client(coin_list, callback_func):
     # initialise the client
     client = await AsyncClient.create()
@@ -46,8 +52,8 @@ def get_upbit_coin_list():
     upbit_exchange_id = 'upbit'
     upbit_exchange_class = getattr(ccxt, upbit_exchange_id)
     upbit_exchange = upbit_exchange_class({
-        'apiKey': 'YOUR_APP_KEY',
-        'secret': 'YOUR_SECRET',
+        'apiKey': exchange_api_dict['upbit']['apiKey'],
+        'secret': exchange_api_dict['upbit']['secret'],
     })
 
     upbit_coin_dict = {
@@ -64,9 +70,12 @@ def get_binance_coin_list():
     binance_exchange_id = 'binance'
     binance_exchange_class = getattr(ccxt, binance_exchange_id)
     binance_exchange = binance_exchange_class({
-        'apiKey': 'YOUR_APP_KEY',
-        'secret': 'YOUR_SECRET',
+        'apiKey': exchange_api_dict['binance']['apiKey'],
+        'secret': exchange_api_dict['binance']['secret'],
     })
+
+    ### TODO: Remove this
+    binance_exchange.nonce = lambda: binance_exchange.milliseconds() - 1000
 
     binance_coin_dict = {
         k:v for k, v in binance_exchange.load_markets().items() 
