@@ -30,7 +30,7 @@ async def upbit_ws_client(coin_list, callback):
         subscribe_data = json.dumps(subscribe_fmt)
         await websocket.send(subscribe_data)
 
-        result_base_path = 'upbit'
+        result_base_path = 'upbit_data'
         os.makedirs(result_base_path, exist_ok=True)
 
         while True:
